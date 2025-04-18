@@ -13,9 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/postcode")
+@Slf4j
 public class PostcodeController {
 
     @Autowired
@@ -28,16 +30,20 @@ public class PostcodeController {
     public ResponseEntity<?> getDistance(@RequestParam String postcode1,
     @RequestParam String postcode2) {
 
+        log.info("getDistance called with postcode1: {}, postcode2: {}", postcode1, postcode2);
+
         try {
             Postcode location1 = postcodeRepository.findByPostcode(postcode1);
 
             if (location1 == null) {
+                log.error("Postcode 1 not found, value: {}", postcode1);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode 1 not found, value:" +postcode1);
             }
 
             Postcode location2 = postcodeRepository.findByPostcode(postcode2);
 
             if (location2 == null) {
+                log.error("Postcode 2 not found, value: {}", postcode2);
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode 2 not found, value:" +postcode2);
             }
 
@@ -47,19 +53,28 @@ public class PostcodeController {
 
             postcodeResponse.setDistance(postcodeService.calculateDistance(location1.getLatitude(), location1.getLongitude(), location2.getLatitude(), location2.getLongitude()));
 
+            log.info("Distance calculated: {}", postcodeResponse.getDistance());
+
             return ResponseEntity.ok(postcodeResponse);
         } catch (Exception e) {
+            log.error("Error calculating distance: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PostcodeResponse());
         }
     }
 
     @GetMapping("/getPostcode")
     public ResponseEntity<?> getPostcode(@RequestParam String postcodeStr) {
+
+        log.info("getPostcode called with postcode: {}", postcodeStr);
+
         Postcode postcode = postcodeRepository.findByPostcode(postcodeStr);
 
         if (postcode == null) {
+            log.error("Postcode not found, value: {}", postcodeStr);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode not found, value:" +postcodeStr);
         }
+
+        log.info("Postcode found: {}", postcode);
 
         return ResponseEntity.ok(postcode);
     }
@@ -68,11 +83,16 @@ public class PostcodeController {
     @PutMapping("/update")
     public ResponseEntity<?> updatePostcode(@RequestBody Postcode postcode) {
 
+        log.info("updatePostcode called with postcode: {}", postcode);
+
         if (postcode.getPostcode() == null) {
+            log.error("Postcode is missing");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode is required");
         }
 
         postcodeRepository.save(postcode);
+
+        log.info("Postcode updated: {}", postcode);
 
         return ResponseEntity.ok(postcode);
     }
