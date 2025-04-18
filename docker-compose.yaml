@@ -1,37 +1,22 @@
 version: '3.8'
-
 services:
-  mysql:
-    image: mysql:8.0.36
-    container_name: mysql8-prod
+  mysql_db:
+    image: mysql:8
+    container_name: mysql_db
     environment:
       MYSQL_ROOT_PASSWORD: my-secret-pw
       MYSQL_DATABASE: bodb
       MYSQL_USER: bodbuser
-      MYSQL_PASSWORD: bodbuserpass
-      TZ: UTC
+      MYSQL_PASSWORD: bodbpass
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql-config:/etc/mysql/conf.d
+      - ./mysql/init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-    networks:
-      - mysql-network
-    restart: unless-stopped
-    security_opt:
-      - no-new-privileges:true
-    command: 
-      - --default-authentication-plugin=mysql_native_password
-      - --character-set-server=utf8mb4
-      - --collation-server=utf8mb4_0900_ai_ci
-      - --max_connections=200
-      - --innodb_buffer_pool_size=1G
-
-networks:
-  mysql-network:
-    driver: bridge
-    attachable: true
-
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   mysql_data:
-    driver: local
