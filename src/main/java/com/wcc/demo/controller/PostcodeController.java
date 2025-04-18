@@ -53,6 +53,18 @@ public class PostcodeController {
         }
     }
 
+    @GetMapping("/getPostcode")
+    public ResponseEntity<?> getPostcode(@RequestParam String postcodeStr) {
+        Postcode postcode = postcodeRepository.findByPostcode(postcodeStr);
+
+        if (postcode == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode not found, value:" +postcodeStr);
+        }
+
+        return ResponseEntity.ok(postcode);
+    }
+    
+
     @PutMapping("/update")
     public ResponseEntity<?> updatePostcode(@RequestBody Postcode postcode) {
 
