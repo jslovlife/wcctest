@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import org.springframework.http.MediaType;
+import com.wcc.demo.model.enums.ErrorEnum;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,7 +72,8 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").value("Username is required"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.USERNAME_IS_REQUIRED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.USERNAME_IS_REQUIRED.getMessage()));
     }
 
     @Test
@@ -83,7 +85,8 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(user)))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").value("Password is required"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.PASSWORD_IS_REQUIRED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.PASSWORD_IS_REQUIRED.getMessage()));
     }
 
     @Test

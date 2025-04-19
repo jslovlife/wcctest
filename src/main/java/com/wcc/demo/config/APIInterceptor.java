@@ -6,6 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.wcc.demo.service.UserService;
+import com.wcc.demo.model.enums.ErrorEnum;
+import com.wcc.demo.model.response.ErrorResponse;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +22,9 @@ public class APIInterceptor implements HandlerInterceptor {
 
     @Autowired
     UserService userService;
+    
+    @Autowired
+    ObjectMapper objectMapper;
 
     @Override
     public boolean preHandle(HttpServletRequest request,
@@ -34,23 +40,33 @@ public class APIInterceptor implements HandlerInterceptor {
         log.info("APIInterceptor preHandle called, username: {}", username);
 
         if (username == null || password == null) {
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("""
-                {"error": "Required headers are missing: x-username and x-password"}
-                """);
-            return false;
+            return returnError(response, HttpServletResponse.SC_UNAUTHORIZED, 
+                    ErrorEnum.REQUIRED_HEADERS_MISSING);
         }
 
         if (!userService.validateUser(username, password)) {
-            response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("""
-                {"error": "Invalid username or password"}
-                """);
-            return false;
+            return returnError(response, HttpServletResponse.SC_UNAUTHORIZED, 
+                    ErrorEnum.INVALID_USERNAME_OR_PASSWORD);
         }
 
         return true;
+    }
+    
+    /**
+     * Helper method to return a standardized error response
+     * 
+     * @param response The HttpServletResponse
+     * @param status The HTTP status code
+     * @param errorEnum The ErrorEnum to use
+     * @return false to indicate the request should not continue
+     * @throws Exception if there's an error writing the response
+     */
+    private boolean returnError(HttpServletResponse response, int status, 
+                              ErrorEnum errorEnum) throws Exception {
+        response.setContentType("application/json");
+        response.setStatus(status);
+        ErrorResponse errorResponse = new ErrorResponse(errorEnum.getCode(), errorEnum.getMessage());
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        return false;
     }
 }

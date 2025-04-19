@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wcc.demo.model.enums.ErrorEnum;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -62,7 +63,8 @@ public class PostcodeControllerTest {
                 .param("postcode1", "AB10 1XG")
                 .param("postcode2", "AB10 6RN"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("Required headers are missing: x-username and x-password"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.REQUIRED_HEADERS_MISSING.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.REQUIRED_HEADERS_MISSING.getMessage()));
     }
 
     @Test
@@ -73,7 +75,8 @@ public class PostcodeControllerTest {
                 .param("postcode1", "AB10 1XG")
                 .param("postcode2", "AB10 6RN"))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("Invalid username or password"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.INVALID_USERNAME_OR_PASSWORD.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.INVALID_USERNAME_OR_PASSWORD.getMessage()));
     }
 
     @Test
@@ -86,7 +89,8 @@ public class PostcodeControllerTest {
                 .param("postcode1", "INVALID")
                 .param("postcode2", "AB10 6RN"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").value("Postcode 1 not found, value:INVALID"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.POSTCODE_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.POSTCODE_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -122,7 +126,8 @@ public class PostcodeControllerTest {
                 .param("postcodeStr", "INVALID")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").value("Postcode not found, value:INVALID"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.POSTCODE_NOT_FOUND.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.POSTCODE_NOT_FOUND.getMessage()));
     }
 
     @Test
@@ -160,7 +165,8 @@ public class PostcodeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postcode)))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$").value("Postcode is required"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.POSTCODE_IS_REQUIRED.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.POSTCODE_IS_REQUIRED.getMessage()));
     }
 
     @Test
@@ -177,7 +183,8 @@ public class PostcodeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postcode)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("Invalid username or password"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.INVALID_USERNAME_OR_PASSWORD.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.INVALID_USERNAME_OR_PASSWORD.getMessage()));
         
     }
 
@@ -194,6 +201,7 @@ public class PostcodeControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(postcode)))
                 .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.error").value("Required headers are missing: x-username and x-password"));
+                .andExpect(jsonPath("$.code").value(ErrorEnum.REQUIRED_HEADERS_MISSING.getCode()))
+                .andExpect(jsonPath("$.message").value(ErrorEnum.REQUIRED_HEADERS_MISSING.getMessage()));
     }
 }
