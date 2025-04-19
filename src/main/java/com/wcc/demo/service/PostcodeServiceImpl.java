@@ -1,9 +1,15 @@
 package com.wcc.demo.service;
 
+import com.wcc.demo.model.entity.Postcode;
+import com.wcc.demo.repository.PostcodeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PostcodeServiceImpl implements PostcodeService {
+
+    @Autowired
+    private PostcodeRepository postcodeRepository;
 
     private final static double EARTH_RADIUS = 6371; // radius in kilometers
 
@@ -28,5 +34,20 @@ public class PostcodeServiceImpl implements PostcodeService {
     @Override
     public double square(double x) {
         return x * x;
+    }
+
+    @Override
+    public Postcode save(Postcode postcode) {
+        return postcodeRepository.save(postcode);
+    }
+
+    @Override
+    public Postcode update(Postcode postcode) {
+        return postcodeRepository.save(postcode);
+    }
+
+    @Override
+    public Postcode findByPostcode(String postcode) {
+        return postcodeRepository.findByPostcode(postcode).orElse(null);
     }
 }

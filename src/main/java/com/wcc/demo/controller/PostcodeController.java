@@ -22,9 +22,6 @@ public class PostcodeController {
 
     @Autowired
     PostcodeService postcodeService;
-    
-    @Autowired
-    PostcodeRepository postcodeRepository;
 
     @GetMapping("/distance")
     public ResponseEntity<?> getDistance(@RequestParam String postcode1,
@@ -33,18 +30,18 @@ public class PostcodeController {
         log.info("getDistance called with postcode1: {}, postcode2: {}", postcode1, postcode2);
 
         try {
-            Postcode location1 = postcodeRepository.findByPostcode(postcode1);
+            Postcode location1 = postcodeService.findByPostcode(postcode1);
 
             if (location1 == null) {
                 log.error("Postcode 1 not found, value: {}", postcode1);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode 1 not found, value:" +postcode1);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Postcode 1 not found, value:" +postcode1);
             }
 
-            Postcode location2 = postcodeRepository.findByPostcode(postcode2);
+            Postcode location2 = postcodeService.findByPostcode(postcode2);
 
             if (location2 == null) {
                 log.error("Postcode 2 not found, value: {}", postcode2);
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode 2 not found, value:" +postcode2);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Postcode 2 not found, value:" +postcode2);
             }
 
             PostcodeResponse postcodeResponse = new PostcodeResponse();
@@ -58,7 +55,7 @@ public class PostcodeController {
             return ResponseEntity.ok(postcodeResponse);
         } catch (Exception e) {
             log.error("Error calculating distance: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PostcodeResponse());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new PostcodeResponse());
         }
     }
 
@@ -67,16 +64,21 @@ public class PostcodeController {
 
         log.info("getPostcode called with postcode: {}", postcodeStr);
 
-        Postcode postcode = postcodeRepository.findByPostcode(postcodeStr);
+        try {
+            Postcode postcode = postcodeService.findByPostcode(postcodeStr);
 
-        if (postcode == null) {
-            log.error("Postcode not found, value: {}", postcodeStr);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode not found, value:" +postcodeStr);
+            if(postcode == null){
+                log.error("Postcode not found, value: {}", postcodeStr);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Postcode not found, value:" + postcodeStr);
+            }
+
+            log.info("Postcode found: {}", postcode);
+            return ResponseEntity.ok(postcode);
+        } catch (Exception e) {
+            log.error("Error finding postcode, postcode: {}", postcodeStr, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error finding postcode");
         }
 
-        log.info("Postcode found: {}", postcode);
-
-        return ResponseEntity.ok(postcode);
     }
     
 
@@ -87,13 +89,17 @@ public class PostcodeController {
 
         if (postcode.getPostcode() == null) {
             log.error("Postcode is missing");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Postcode is required");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Postcode is required");
         }
 
-        postcodeRepository.save(postcode);
+        try {
+            postcodeService.save(postcode);
 
-        log.info("Postcode updated: {}", postcode);
-
-        return ResponseEntity.ok(postcode);
+            log.info("Postcode updated: {}", postcode);
+            return ResponseEntity.ok(postcode);
+        } catch (Exception e) {
+            log.error("Error updating postcode, postcode: {}", postcode, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating postcode");
+        }
     }
 }
