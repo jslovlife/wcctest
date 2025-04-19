@@ -21,10 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 public class PostcodeController {
 
     @Autowired
-    private PostcodeService postcodeService;
-
+    PostcodeService postcodeService;
+    
     @Autowired
-    private PostcodeRepository postcodeRepository;
+    PostcodeRepository postcodeRepository;
 
     @GetMapping("/distance")
     public ResponseEntity<?> getDistance(@RequestParam String postcode1,
