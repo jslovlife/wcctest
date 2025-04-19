@@ -16,3 +16,13 @@ Execute command as below:
 > mvn clean package
 
 You may find the jar file under "target" folder
+
+
+#### How to test the API
+If you use POSTMAN, you may refer to mcc.postman_collection.json
+
+#### Test API Flow
+1. Register a new user by calling /api/user/create
+2. Test Postcode API, remember to add below attribute in headers:
+x-username: {usernmae}
+x-password: {password}

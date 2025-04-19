@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "4d15ec10-a31d-4715-9d36-a3db0a8d7a55",
+		"name": "mcc",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4934296"
+	},
+	"item": [
+		{
+			"name": "postcode",
+			"item": [
+				{
+					"name": "getDistance",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-username",
+								"value": "user1",
+								"type": "text"
+							},
+							{
+								"key": "x-password",
+								"value": "12345678",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8081/api/postcode/distance?postcode1=AB10 1XG&postcode2=AB12 4NA",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"postcode",
+								"distance"
+							],
+							"query": [
+								{
+									"key": "postcode1",
+									"value": "AB10 1XG"
+								},
+								{
+									"key": "postcode2",
+									"value": "AB12 4NA"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatePostcode",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-username",
+								"value": "user1",
+								"type": "text"
+							},
+							{
+								"key": "x-password",
+								"value": "12345678",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 8,\n    \"postcode\": \"AB12 4NAAA\",\n    \"latitude\": 57.064273,\n    \"longitude\": -2.130018\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/postcode/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"postcode",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPostcode",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/postcode/getPostcode?postcodeStr=AB12 4NA",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"postcode",
+								"getPostcode"
+							],
+							"query": [
+								{
+									"key": "postcodeStr",
+									"value": "AB12 4NA"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "getUserByUsername",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/api/user/findByUsername?username=user1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"user",
+								"findByUsername"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "user1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saveUser",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\":\"user1\",\n    \"password\":\"123456\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/user/save",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"user",
+								"save"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "saveUser Copy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\":1,\n    \"username\":\"user1\",\n    \"password\":\"12345678\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8081/api/user/update",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"api",
+								"user",
+								"update"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
