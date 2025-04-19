@@ -59,6 +59,16 @@ public class UserController {
     @PutMapping("/update")
     public ResponseEntity<?> updateUser(@RequestBody User user) {
         try {
+            if(user.getUsername() == null){
+                log.error("Username is required");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Username is required");
+            }
+
+            if(user.getPassword() == null){
+                log.error("Password is required");
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Password is required");
+            }
+
             User updatedUser = userService.update(user);
 
             log.info("User updated, user: {}", updatedUser);

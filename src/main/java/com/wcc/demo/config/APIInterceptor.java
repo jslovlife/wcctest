@@ -35,7 +35,7 @@ public class APIInterceptor implements HandlerInterceptor {
 
         if (username == null || password == null) {
             response.setContentType("application/json");
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("""
                 {"error": "Required headers are missing: x-username and x-password"}
                 """);
